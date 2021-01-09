@@ -74,13 +74,13 @@
   (println "improve")
   (average guess (/ x guess)))
 
-(defn sqrt-iter [guess, x]
-  (if (good-enough? guess x)
-    guess
-    (sqrt-iter (improve guess x) x)))
-
-(defn sqrt [number]
-  (sqrt-iter 1.0 number))
+;(defn sqrt-iter [guess, x]
+;  (if (good-enough? guess x)
+;    guess
+;    (sqrt-iter (improve guess x) x)))
+;
+;(defn sqrt [number]
+;  (sqrt-iter 1.0 number))
 
 (defn new-if [predicate, then-clause, else-clause]
   (cond
@@ -91,3 +91,49 @@
   (new-if (good-enough? guess x)
           guess
           (new-sqrt (improve guess x) x)))
+
+(defn new-good-enough? [guess x]
+  (println "New thing")
+  (< (abs (- (improve guess x) guess)) 0.000001))
+
+(defn new-sqrt-iter [guess x]
+  (if (new-good-enough? guess x)
+    guess
+    (new-sqrt-iter (improve guess x) x)))
+
+(defn lexical-sqrt [x]
+  (let [
+        good-enough? (fn [guess, x] (< (abs (- (square guess) x)) 0.001))
+        improve (fn [guess, x] (average guess (/ x guess)))
+        sqrt-iter (fn [guess, x]
+                    (println "Here again")
+                    (if (good-enough? guess x)
+                      guess
+                      (recur (improve guess x) x)))
+        ]
+    (sqrt-iter 1.0 x))
+  )
+
+(def greet (fn [] (println "Hello world!")))
+(def macro-greet #(println "Another world!" %))
+(defn greeting
+  ([] (greeting "World"))
+  ([x] (greeting "Hello" x))
+  ([x, y] (str x ", " y "!"))
+  )
+
+(defn do-nothing [x] x)
+(defn always-thing
+  "takes any number of arguments, ignores all of them, and returns the number 100"
+  [& x] 100)
+
+(defn make-thingy
+  "takes a single argument x. It should return another function, which takes any number of arguments and always returns x"
+  [x] (fn [& any] x))
+
+(defn triplicate
+  "takes another function and calls it three times, without any arguments"
+  [f]
+  (f)
+  (f)
+  (f))
