@@ -1,4 +1,5 @@
-(ns clojure-prjs.core)
+(ns clojure-prjs.core
+  (:import (java.net URL)))
 
 (defn foo
   "I don't do a whole lot."
@@ -137,3 +138,28 @@
   (f)
   (f)
   (f))
+
+(defn opposite
+  "Get single argument f and return another function which takes any no of args,
+  applies f on them, and then calls not on the result. The not function in Clojure does logical negation."
+  [f]
+  (fn ([& x] (not (apply f x)))))
+
+(defn triplicate2 [f & args]
+  (triplicate (fn [] (apply f args))))
+
+(assert (= -1.0 (Math/cos (Math/PI))))
+(assert (= 1.0 (+ (Math/pow (Math/cos 0.2) 2) (Math/pow (Math/sin 0.2) 2))))
+
+(defn http-get [url]
+  "Fetches that URL from the web, and returns the content as a string"
+  (slurp (.openStream (URL. url))))
+
+(defn simple-http-get [url]
+  (slurp url))
+
+(defn one-less-arg [f, x]
+  (fn [& args] (apply f x args)))
+
+(defn two-fns [f, g]
+  (fn [x] (f (g x))))
